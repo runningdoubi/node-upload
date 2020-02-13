@@ -3,12 +3,21 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var fs = require('fs');
 
 var indexRouter = require('./routes/index');
 var uploadRouter = require('./routes/upload');
 
 var app = express();
-
+const NEED_DIRS = ['upload/', 'upload_tmp/', 'compress_tmp/'];
+// 创建需要的目录
+NEED_DIRS.map(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+    console.log('创建目录：', dir);
+  }
+});
+console.log('dsfadfaf')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -23,12 +32,12 @@ app.use('/', indexRouter);
 app.use('/upload', uploadRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

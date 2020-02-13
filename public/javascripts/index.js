@@ -3,7 +3,7 @@ function formSubmit() {
     if (file) {
         $('#form').ajaxSubmit((msg) => {
             console.log(msg);
-            window.alert(msg);
+            window.alert(JSON.stringify(msg));
             window.location.reload();
         })
     } else {

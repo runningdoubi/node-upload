@@ -4,7 +4,7 @@ block content
   h1 文件上传
   p 选择一个文件上传
   form(id='form', action='/upload', method='post', enctype="multipart/form-data", onsubmit='return formSubmit()', target='_blank')
-    input(id='file', type='file', name='content')
+    input(id='file', type='file', name='content', accept='.zip')
     input(type='submit', value='上传')
   div
     h2 已上传文件列表
