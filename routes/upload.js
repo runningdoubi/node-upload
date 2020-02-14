@@ -57,15 +57,25 @@ router.post('/', upload.any(), function (req, res, next) {
                 return true;
             });
             if (checkFile.includes(false)) {
-                clearDir(COMPRESS_TMP_PATH);
-                clearDir(UPLOAD_TMP_PATH);
+                clearAllTmpDir();
                 return;
             }
             // 文件参数检验 todo
-            fs.readFileAsync(`${COMPRESS_TMP_PATH}conf.json`, 'utf-8').then(data => {
-                let content = JSON.parse(data);
-                console.log('data====', content.title);
-            });
+            let content = fs.readFileSync(`${COMPRESS_TMP_PATH}conf.json`, 'utf-8');
+            try {
+                let contentObj = JSON.parse(content);
+                let checkResult = checkParams(contentObj);
+                if (checkResult) {
+                    res.send(checkResult);
+                    clearAllTmpDir();
+                    return;
+                }
+            } catch (e) {
+                res.send(ERR_CODE['JSON-ILLEGAL']);
+                clearAllTmpDir();
+                return;
+            }
+
             // 校验通过，清除临时解压文件，开始保存文件
             clearDir(COMPRESS_TMP_PATH);
             let originFileName = `${UPLOAD_PATH}${Date.now()}-${file.originalname}`;
@@ -84,7 +94,11 @@ router.post('/', upload.any(), function (req, res, next) {
             console.log('解压失败===', e);
         });
 });
-
+// 清空所有临时文件
+function clearAllTmpDir() {
+    clearDir(COMPRESS_TMP_PATH);
+    clearDir(UPLOAD_TMP_PATH);
+}
 // 清空文件夹
 function clearDir(path) {
     fs.readdirAsync(path).then(files => {
@@ -101,5 +115,56 @@ function clearDir(path) {
         console.log(e);
     })
 }
-
+// 校验conf.json中参数
+function checkParams(contentObj) {
+    if (!contentObj.title) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json title is required'
+        }
+    }
+    if (!contentObj.desc) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json desc is required'
+        }
+    }
+    if (!contentObj.type) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json type is required'
+        }
+    }
+    if (!contentObj.author) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json author is required'
+        }
+    }
+    if (!contentObj.username) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json username is required'
+        }
+    }
+    if (!contentObj.link) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json link is required'
+        }
+    }
+    if (!contentObj.time) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json time is required'
+        }
+    }
+    if (!contentObj.createrHooks) {
+        return {
+            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errmsg: 'conf.json createrHooks is required'
+        }
+    }
+    return null;
+}
 module.exports = router;

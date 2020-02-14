@@ -17,7 +17,6 @@ NEED_DIRS.map(dir => {
     console.log('创建目录：', dir);
   }
 });
-console.log('dsfadfaf')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
