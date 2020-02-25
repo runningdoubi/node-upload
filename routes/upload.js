@@ -49,7 +49,7 @@ router.post('/', upload.any(), function (req, res, next) {
             let checkFile = MUST_FILE.map(file => {
                 if (!fs.existsSync(`${COMPRESS_TMP_PATH}${file}`)) {
                     res.send({
-                        err: ERR_CODE['FILE-NO-STANDARD'].err,
+                        errno: ERR_CODE['FILE-NO-STANDARD'].errno,
                         errmsg: `${file} not found`
                     });
                     return false;
@@ -119,49 +119,49 @@ function clearDir(path) {
 function checkParams(contentObj) {
     if (!contentObj.title) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json title is required'
         }
     }
     if (!contentObj.desc) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json desc is required'
         }
     }
     if (!contentObj.type) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json type is required'
         }
     }
     if (!contentObj.author) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json author is required'
         }
     }
     if (!contentObj.username) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json username is required'
         }
     }
     if (!contentObj.link) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json link is required'
         }
     }
     if (!contentObj.time) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json time is required'
         }
     }
     if (!contentObj.createrHooks) {
         return {
-            err: ERR_CODE['JSON-PARAMS-ERR'].err,
+            errno: ERR_CODE['JSON-PARAMS-ERR'].errno,
             errmsg: 'conf.json createrHooks is required'
         }
     }
