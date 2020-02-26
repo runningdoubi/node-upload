@@ -15,16 +15,20 @@ module.exports = {
         errno: 1003,
         errmsg: 'max size 1M'
     },
-    'FILE-NO-STANDARD': {// 文件不规范(少文件)
-        errno: 1004,
-        errmsg: 'file no standard'
+    'FILE-NO-STANDARD': (file) => {
+        return {// 文件不规范(少文件)
+            errno: 1004,
+            errmsg: `${file} not found`
+        }
     },
     'JSON-ILLEGAL': {// conf.json parse失败
         errno: 1005,
-        errmsg: 'conf.json illegal'
+        errmsg: 'conf.json parse err'
     },
-    'JSON-PARAMS-ERR': {// 文件参数缺失
-        errno: 1006,
-        errmsg: 'params err'
+    'JSON-PARAMS-ERR': (field) => {
+        return {// 文件参数缺失
+            errno: 1006,
+            errmsg: `conf.json ${field} is required`
+        }
     }
 }
