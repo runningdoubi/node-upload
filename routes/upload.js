@@ -6,23 +6,19 @@ const { fs } = require('../public/javascripts/promisify');
 
 const ERR_CODE = require('../public/javascripts/errcode');
 
-const UPLOAD_TMP_PATH = 'upload_tmp/';
-const UPLOAD_PATH = 'upload/';
-const COMPRESS_TMP_PATH = 'compress_tmp/';
+const {
+    must_dirs: {
+        upload: UPLOAD_PATH,
+        compress_tmp: COMPRESS_TMP_PATH,
+        upload_tmp: UPLOAD_TMP_PATH
+    },
+    accept_files: ACCEPT_FILES,
+    must_file: MUST_FILE,
+    max_size: MAX_SIZE
+} = require('../conf/upload.conf');
+
 const upload = multer({ dest: UPLOAD_TMP_PATH });
 
-// 允许上传的文件类型
-// zip, tar, tgz, gzip
-const ACCEPT_FILES = {
-    'application/zip': 'zip',
-    'application/x-tar': 'tar',
-    'application/x-compressed': 'tgz',
-    'application/x-gzip': 'gzip'
-};
-// 文件内必须包含的文件
-const MUST_FILE = ['conf.json', 'README.md'];
-// 文件大小限制 1M
-const MAX_SIZE = 1 * 1024 * 1024;
 /* POST upload */
 router.post('/', upload.any(), function (req, res, next) {
     if (!req.files.length) {

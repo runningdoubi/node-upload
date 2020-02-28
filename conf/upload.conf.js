@@ -1,17 +1,13 @@
-## 一个基于express的极简的上传文件的案例
-# 开始
-npm i && npm start
+/**
+ * @file: upload.conf.js
+ * @des: upload 配置文件
+ * @author: zhangjiaqi03
+ * @date: 2020-02-28 21:44:31
+ * @last modified by:   zhangjiaqi03
+ * @last modified time: 2020-02-28 21:44:31
+ */
 
-默认3000端口
-
-访问localhost:3000
-
-# 说明
-上传基于配置 conf/upload.conf.js
-
-默认配置
-``` javascript
-{
+module.exports = {
     // 需要的目录,如果没有会自动创建
     must_dirs: {
         // 上传目录
@@ -33,18 +29,3 @@ npm i && npm start
     // 文件大小限制 1M
     max_size: 1 * 1024 * 1024
 }
-```
-
-上传会对conf.json做简单的校验，必需字段(暂定)
-``` javascript
-[
-    'title',
-    'desc',
-    'type',
-    'author',
-    'username',
-    'link',
-    'time',
-    'createrHooks'
-]
-```
