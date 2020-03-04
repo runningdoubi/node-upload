@@ -37,7 +37,7 @@ router.post('/', upload.any(), function (req, res, next) {
         res.send(ERR_CODE['FILE-LIMIT']);
         return;
     }
-    // 文件必填字段校验
+    // 解压文件
     compressing[ACCEPT_FILES[file.mimetype]].uncompress(file.path, COMPRESS_TMP_PATH)
         .then(() => {
             console.log('解压成功');
@@ -55,8 +55,8 @@ router.post('/', upload.any(), function (req, res, next) {
             }
             // 文件参数检验 todo
             let content = fs.readFileSync(`${COMPRESS_TMP_PATH}conf.json`, 'utf-8');
+            let contentObj = JSON.parse(content);
             try {
-                let contentObj = JSON.parse(content);
                 let checkResult = checkParams(contentObj);
                 if (checkResult) {
                     res.send(checkResult);
@@ -69,19 +69,16 @@ router.post('/', upload.any(), function (req, res, next) {
                 return;
             }
 
-            // 校验通过，清除临时解压文件，开始保存文件
-            clearDir(COMPRESS_TMP_PATH);
-            let originFileName = `${UPLOAD_PATH}${Date.now()}-${file.originalname}`;
-            fs.readFileAsync(file.path).then(data => {
-                fs.writeFileAsync(originFileName, data).then(data => {
-                    res.send(ERR_CODE['SUCCESS']);
-                    clearDir(UPLOAD_TMP_PATH);
-                }).catch(e => {
-                    console.log(e);
-                })
-            }).catch(e => {
-                console.log(e);
-            })
+            // 校验通过，开始保存文件，清除临时解压文件
+            let dirName = `${parseInt(Date.now() / 1000)}-${contentObj.username}`;
+            // 创建目录
+            fs.mkdirSync(`${UPLOAD_PATH}${dirName}`, { recursive: true });
+            // 拷贝文件
+            MUST_FILE.map(file => {
+                fs.copyFileSync(`${COMPRESS_TMP_PATH}${file}`, `${UPLOAD_PATH}${dirName}/${file}`);
+            });
+            clearAllTmpDir();
+            res.send(ERR_CODE['SUCCESS']);
         })
         .catch(e => {
             console.log('解压失败===', e);
@@ -119,17 +116,11 @@ function checkParams(contentObj) {
     if (!contentObj.type) {
         return ERR_CODE['JSON-PARAMS-ERR']('type');
     }
-    if (!contentObj.author) {
-        return ERR_CODE['JSON-PARAMS-ERR']('author');
-    }
     if (!contentObj.username) {
         return ERR_CODE['JSON-PARAMS-ERR']('username');
     }
     if (!contentObj.link) {
         return ERR_CODE['JSON-PARAMS-ERR']('link');
-    }
-    if (!contentObj.time) {
-        return ERR_CODE['JSON-PARAMS-ERR']('time');
     }
     if (!contentObj.createrHooks) {
         return ERR_CODE['JSON-PARAMS-ERR']('createrHooks');

@@ -41,10 +41,8 @@ npm i && npm start
     'title',
     'desc',
     'type',
-    'author',
     'username',
     'link',
-    'time',
     'createrHooks'
 ]
 ```
