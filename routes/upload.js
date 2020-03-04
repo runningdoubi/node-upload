@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const compressing = require('compressing');
+const path = require('path');
 const { fs } = require('../public/javascripts/promisify');
 
 const ERR_CODE = require('../public/javascripts/errcode');
@@ -43,7 +44,7 @@ router.post('/', upload.any(), function (req, res, next) {
             console.log('解压成功');
             // 必需文件校验
             let checkFile = MUST_FILE.map(file => {
-                if (!fs.existsSync(`${COMPRESS_TMP_PATH}${file}`)) {
+                if (!fs.existsSync(path.join(COMPRESS_TMP_PATH, file))) {
                     res.send(ERR_CODE['FILE-NO-STANDARD'](file));
                     return false;
                 }
@@ -54,7 +55,7 @@ router.post('/', upload.any(), function (req, res, next) {
                 return;
             }
             // 文件参数检验 todo
-            let content = fs.readFileSync(`${COMPRESS_TMP_PATH}conf.json`, 'utf-8');
+            let content = fs.readFileSync(path.join(COMPRESS_TMP_PATH, 'conf.json'), 'utf-8');
             let contentObj = JSON.parse(content);
             try {
                 let checkResult = checkParams(contentObj);
@@ -70,12 +71,12 @@ router.post('/', upload.any(), function (req, res, next) {
             }
 
             // 校验通过，开始保存文件，清除临时解压文件
-            let dirName = `${parseInt(Date.now() / 1000)}-${contentObj.username}`;
+            let dirName = `${parseInt(Date.now() / 1000)}_${contentObj.username}`;
             // 创建目录
-            fs.mkdirSync(`${UPLOAD_PATH}${dirName}`, { recursive: true });
+            fs.mkdirSync(path.join(UPLOAD_PATH, dirName), { recursive: true });
             // 拷贝文件
             MUST_FILE.map(file => {
-                fs.copyFileSync(`${COMPRESS_TMP_PATH}${file}`, `${UPLOAD_PATH}${dirName}/${file}`);
+                fs.copyFileSync(path.join(COMPRESS_TMP_PATH, file), path.join(UPLOAD_PATH, dirName, file));
             });
             clearAllTmpDir();
             res.send(ERR_CODE['SUCCESS']);
@@ -90,10 +91,10 @@ function clearAllTmpDir() {
     clearDir(UPLOAD_TMP_PATH);
 }
 // 清空文件夹
-function clearDir(path) {
-    fs.readdirAsync(path).then(files => {
+function clearDir(delPath) {
+    fs.readdirAsync(delPath).then(files => {
         files.map(file => {
-            fs.unlink(`${path}${file}`, (err) => {
+            fs.unlink(path.join(delPath, file), (err) => {
                 if (err) {
                     console.log('delete tmp file err===', err);
                 } else {
