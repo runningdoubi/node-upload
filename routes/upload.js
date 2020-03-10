@@ -71,7 +71,7 @@ router.post('/', upload.any(), function (req, res, next) {
             }
 
             // 校验通过，开始保存文件，清除临时解压文件
-            let dirName = `${parseInt(Date.now() / 1000)}_${contentObj.username}`;
+            let dirName = `${contentObj.type}_${parseInt(Date.now() / 1000)}_${contentObj.username}`;
             // 创建目录
             fs.mkdirSync(path.join(UPLOAD_PATH, dirName), { recursive: true });
             // 拷贝文件
